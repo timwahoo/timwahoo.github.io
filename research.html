@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Personal site</title>
+  <meta name="description" content="A personal website." />
+  <meta property="og:title" content="Personal site" />
+  <meta property="og:description" content="A personal website." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>
+    /* pick the theme before the first paint — no flash of the wrong mode */
+    (function () {
+      try {
+        var t = localStorage.getItem("site-theme");
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.dataset.theme = t;
+      } catch (e) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="research">
+
+  <noscript>
+    <p class="noscript-note">This site renders its content with JavaScript — please enable it to read along.</p>
+  </noscript>
+
+  <div class="scroll-progress"></div>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="Home">
+        <span class="brand-dot"></span>
+        <span data-bind="identity.firstName"></span> <em data-bind="identity.lastName"></em>
+      </a>
+      <div class="nav-links" data-render="nav"></div>
+      <button class="theme-toggle" type="button" data-theme-toggle data-feature="themeToggle" aria-label="Switch to day mode" title="Switch to day mode">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2.6v2M12 19.4v2M2.6 12h2M19.4 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"></path>
+        </svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.4 14.8A8.7 8.7 0 0 1 9.2 3.6a8.7 8.7 0 1 0 11.2 11.2Z"></path>
+        </svg>
+      </button>
+      <a class="nav-cta" data-bind="nav.cta.label nav.cta.href|href" data-require="nav.cta"></a>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="page-head">
+    <div class="wrap">
+      <div class="kicker mono" data-bind="research.kicker"></div>
+      <h1 data-bind="research.title|html"></h1>
+      <p class="page-sub" data-bind="research.sub"></p>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="lab" data-feature="lab">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="idx" data-bind="research.lab.idx"></span>
+          <h2 data-bind="research.lab.heading"></h2>
+          <span class="rule"></span>
+        </div>
+        <p class="body-text rv" style="max-width: 62ch; margin-bottom: 2.4rem; color: var(--ink-2)" data-bind="research.lab.intro"></p>
+
+        <div class="lab rv" data-lab>
+          <div class="lab-bar">
+            <span class="lab-id" data-bind="research.lab.id"></span>
+
+            <div class="ctrl">
+              <label>Trajectory</label>
+              <div class="seg">
+                <button class="on" data-traj="cartesian">Cartesian</button>
+                <button data-traj="radial">Radial</button>
+                <button data-traj="spiral">Spiral</button>
+              </div>
+            </div>
+
+            <div class="ctrl">
+              <label>Accel</label>
+              <input type="range" id="ctrl-r" min="0" max="4" step="1" value="2" aria-label="Acceleration factor" />
+              <span class="val" id="val-r">4×</span>
+            </div>
+
+            <div class="ctrl">
+              <label>Noise</label>
+              <input type="range" id="ctrl-noise" min="0" max="100" step="5" value="0" aria-label="Noise level" />
+              <span class="val" id="val-noise">0</span>
+            </div>
+
+            <button class="replay" id="replay">Replay acquisition</button>
+          </div>
+
+          <div class="lab-stage">
+            <div class="panel">
+              <div class="panel-head">
+                <span class="p-name"><b>A</b> · Reference</span>
+                <span class="p-val">fully sampled</span>
+              </div>
+              <div class="frame">
+                <canvas id="panel-truth"></canvas>
+                <span class="tag-abs">|ρ| ground truth</span>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <span class="p-name"><b>B</b> · k-space</span>
+                <span class="p-val" id="val-acq">100%</span>
+              </div>
+              <div class="frame">
+                <canvas id="panel-ksp"></canvas>
+                <span class="tag-abs">log|Fρ| × mask</span>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <span class="p-name"><b>C</b> · Reconstruction</span>
+                <span class="p-val" id="val-psnr">— dB</span>
+              </div>
+              <div class="frame">
+                <canvas id="panel-rec"></canvas>
+                <span class="tag-abs">F⁻¹(mask · data)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-foot">
+            <p class="lab-note" id="lab-note" data-bind="research.lab.notes.cartesian|html"></p>
+            <div class="lab-metrics">
+              <div class="metric"><b data-acq>100%</b><span>Acquired</span></div>
+              <div class="metric"><b data-psnr>—</b><span>PSNR</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" data-require="research.threads">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="idx" data-bind="research.threadsHead.idx"></span>
+          <h2 data-bind="research.threadsHead.heading"></h2>
+          <span class="rule"></span>
+        </div>
+        <div data-render="threads"></div>
+      </div>
+    </section>
+
+    <section class="section" data-require="research.tools.items">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="idx" data-bind="research.tools.idx"></span>
+          <h2 data-bind="research.tools.heading"></h2>
+          <span class="rule"></span>
+        </div>
+        <div class="tools" data-render="tools"></div>
+      </div>
+    </section>
+
+    <section class="cta" data-require="research.cta">
+      <div class="wrap">
+        <h2 class="rv" data-bind="research.cta.heading|html"></h2>
+        <p class="rv" style="--d:0.1s" data-bind="research.cta.sub"></p>
+        <a class="btn btn-solid rv" style="--d:0.2s" data-bind="research.cta.action.href|href">
+          <span data-bind="research.cta.action.label"></span> <span class="arr">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <span data-bind="identity.firstName"></span> <em data-bind="identity.lastName"></em>
+          <p data-bind="footer.blurb"></p>
+        </div>
+        <div class="foot-col" data-require="nav.items">
+          <h4>Pages</h4>
+          <ul data-render="footerPages"></ul>
+        </div>
+        <div class="foot-col" data-require="links">
+          <h4>Elsewhere</h4>
+          <ul data-render="footerLinks"></ul>
+        </div>
+      </div>
+      <div class="foot-bar">
+        <span>© <span data-year></span> <span data-bind="identity.fullName"></span> — <b data-bind="footer.note"></b> on GitHub Pages</span>
+        <span data-bind="footer.stack"></span>
+        <span data-bind="footer.builtWith|html"></span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/personalize.js"></script>
+  <script type="module" src="js/site.js"></script>
+  <script type="module" src="js/kspacelab.js"></script>
+</body>
+</html>
