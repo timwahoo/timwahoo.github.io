@@ -54,7 +54,27 @@ const THEMES = {
 };
 
 const mount = document.querySelector("[data-hero-canvas]");
-if (mount) init();
+
+/* ---------- the volume can be switched off ----------
+   `js/site.js` owns the switch and announces the state with a `herochange`
+   event. When the volume is off the scene is never built, so the GPU stays
+   idle; when it is switched back on the stack is built then. */
+const heroOn = () => document.documentElement.dataset.hero !== "off";
+
+let controller = null;
+
+if (mount && heroOn()) controller = init();
+
+document.addEventListener("herochange", (e) => {
+  if (!mount) return;
+  const on = e.detail?.visible ?? heroOn();
+  if (on) {
+    if (!controller) controller = init();
+    controller.start();
+  } else {
+    controller?.stop();
+  }
+});
 
 function init() {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -302,8 +322,10 @@ function init() {
 
   const clock = new THREE.Clock();
   let t = reduced ? 1.4 : 0;
+  let running = false;
 
   function frame() {
+    if (!running) return;
     requestAnimationFrame(frame);
     if (document.hidden || !visible) return;
 
@@ -362,5 +384,20 @@ function init() {
 
     composer.render();
   }
-  frame();
+
+  /* The loop can be paused while the volume is switched off — the scene stays
+     in memory, but nothing is rendered and the GPU is left alone. */
+  function start() {
+    if (running) return;
+    running = true;
+    clock.getDelta(); // drop the time that passed while paused
+    requestAnimationFrame(frame);
+  }
+
+  function stop() {
+    running = false;
+  }
+
+  start();
+  return { start, stop };
 }

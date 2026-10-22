@@ -38,6 +38,7 @@ Useful things to know:
 | Reword the "page not found" page | `notFound` |
 | Hide a block (the lab, the WebGL hero, the portrait, the counters, the marquee) | set it to `false` under `features` |
 | Hide the day / night switch | `features.themeToggle` → `false` |
+| Let visitors switch the WebGL hero off | nothing to do — the cube button in the navigation bar does it, and the choice is remembered |
 
 Strings marked `/* html */` accept inline markup (`<strong>`, `<em>`, `<a>`, `<br>`);
 everything else is inserted as plain text. Add a `url` to a publication entry to
@@ -79,7 +80,7 @@ js/
   hero.js                three.js volumetric hero
   kspacelab.js           interactive k-space simulator
   publications.js        publication list/filter/BibTeX rendering
-  site.js                nav, day/night toggle, scroll reveals, portrait scrub, mini figures, toasts
+  site.js                nav, day/night toggle, hero volume switch, scroll reveals, portrait scrub, mini figures, toasts
 assets/
   favicon.svg
   png_stack/             the source acquisition — 158 axial MGE slices
@@ -118,6 +119,28 @@ How it works:
 
 Both palettes clear WCAG AA for body text (day: ink 16.4:1, secondary 8.2:1, muted 5.0:1,
 accent 4.8:1).
+
+### Hero volume switch
+
+The WebGL volume behind the home page is the heaviest thing on the site, so the
+navigation bar carries a second switch — a cube next to the sun/moon — that lets
+any visitor turn it off.
+
+| | |
+| --- | --- |
+| button | the cube in the navigation bar (home page only) |
+| state | `document.documentElement.dataset.hero` — `"on"` or `"off"` |
+| memory | `localStorage`, key `site-hero` |
+| event | `herochange` on `document`, `detail: { visible }` |
+
+- The state is read by a tiny inline script in `index.html`'s `<head>`, before the
+  first paint, so a visitor who switched the volume off never sees it flash on.
+- While the volume is off the scene is never built — no WebGL context, no volume
+  download, no render loop. Switching it back on builds the stack then.
+- Switching it off while it is running pauses the render loop: the GPU is left
+  alone, and the layer fades out (`html[data-hero="off"] .hero-canvas`).
+- `features.heroCanvas: false` removes the volume *and* the switch — there would
+  be nothing left to toggle.
 
 ### The MRI volume
 
@@ -193,7 +216,7 @@ The demo persona is loud. If your site is quieter, the blocks collapse on their 
 | No open-source projects | `home.work.items: []` / `research.tools.items: []` → "Selected work" and "Tools we ship" disappear |
 | No research threads yet | `research.threads: []` → the section disappears |
 | No timeline, no toolkit, no contact links | the matching blocks disappear |
-| The WebGL hero is too much | `features.heroCanvas: false` |
+| The WebGL hero is too much | `features.heroCanvas: false` — or leave it and let visitors switch it off with the cube button |
 | The MRI simulator is not your thing | `features.lab: false` |
 | The portrait is not your thing | `features.portrait: false`, or swap the `<canvas>` for an `<img>` |
 | The TR/TE readout means nothing to you | `hero.readout: []` → the instrument strip disappears |
@@ -246,6 +269,8 @@ If the repo is not at the domain root it still works, since all asset URLs are r
   operating system until the visitor picks one.
 - Canvas work is capped: pixel ratio ≤ 2, textures cached, rAF paused when the tab is hidden or
   the hero leaves the viewport.
+- The hero can be switched off from the navigation bar: the scene is not built at all, and a
+  running one is paused — useful on low-power machines or for motion-sensitive visitors.
 - The hero's MRI stack is 44 pre-rendered 160 × 160 grayscale slices (≈ 310 KB, fetched once and
   cached); the About portrait streams full-resolution slices one at a time as you scrub.
 - Degrades gracefully — the k-space lab is a progressive enhancement over readable prose.

@@ -67,6 +67,47 @@ window
     if (!storedTheme()) applyTheme(e.matches ? "light" : "dark");
   });
 
+/* ---------- hero volume on / off ----------
+   The WebGL volume behind the home page can be switched off by the visitor —
+   on a low-power machine, or when the motion is unwelcome. The choice is
+   remembered under the `site-hero` key and announced with a `herochange`
+   event on `document`; `js/hero.js` listens for it. The inline snippet in
+   the <head> reads the same key before the first paint, so the volume never
+   flashes on for someone who switched it off.
+   -------------------------------------------------------------------------- */
+
+const HERO_KEY = "site-hero";
+
+function applyHero(visible, persist = false, announce = true) {
+  rootEl.dataset.hero = visible ? "on" : "off";
+  if (persist) {
+    try {
+      localStorage.setItem(HERO_KEY, visible ? "on" : "off");
+    } catch {
+      /* private mode — the choice just won't stick */
+    }
+  }
+
+  const label = visible ? "Turn off the hero volume" : "Turn on the hero volume";
+  document.querySelectorAll("[data-hero-toggle]").forEach((btn) => {
+    btn.setAttribute("aria-pressed", String(visible));
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+  });
+
+  if (announce) {
+    document.dispatchEvent(new CustomEvent("herochange", { detail: { visible } }));
+  }
+}
+
+const heroToggle = document.querySelector("[data-hero-toggle]");
+if (heroToggle) {
+  applyHero(rootEl.dataset.hero !== "off", false, false);
+  heroToggle.addEventListener("click", () => {
+    applyHero(rootEl.dataset.hero === "off", true);
+  });
+}
+
 /* ---------- nav ---------- */
 const nav = document.querySelector(".nav");
 const progress = document.querySelector(".scroll-progress");

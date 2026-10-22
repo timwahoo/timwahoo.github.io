@@ -89,8 +89,8 @@ export const SITE = {
     /* The little instrument readout under the hero. `attr` lets a value be
        updated live by the WebGL hero (slice counter). */
     readout: [
-      { label: "TR", value: "2300", unit: "ms" },
-      { label: "TE", value: "30", unit: "ms" },
+      { label: "TR", value: "60", unit: "ms" },
+      { label: "TE", value: "3", unit: "ms" },
       { label: "Field", value: "3T" },
       { label: "Slice", value: "021", unit: "/044", attr: "data-readout-slice" },
       { label: "Matrix", value: "256²" },
@@ -118,6 +118,7 @@ export const SITE = {
       ], /* html */
       stats: [
         { value: "2", label: "Publications" },
+        { value: "3T", label: "High field" },        
         { value: "9.4T", label: "Ultra-high field" },
       ],
     },

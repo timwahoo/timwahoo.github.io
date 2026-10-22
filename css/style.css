@@ -317,6 +317,36 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 html[data-theme="light"] .theme-toggle .i-sun { display: none; }
 html[data-theme="light"] .theme-toggle .i-moon { display: block; }
 
+/* ---------- hero volume toggle ---------- */
+
+.hero-toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  position: relative;
+  z-index: 1002;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink-3);
+  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.4s var(--ease);
+}
+
+.hero-toggle:hover {
+  color: var(--acc);
+  border-color: rgb(var(--acc-rgb) / 0.45);
+  background: var(--acc-ghost);
+  transform: rotate(-14deg);
+}
+
+.hero-toggle svg { width: 17px; height: 17px; }
+
+/* volume on: the cube. volume off: the cube with a slash. */
+.hero-toggle .i-off { display: none; }
+html[data-hero="off"] .hero-toggle .i-on { display: none; }
+html[data-hero="off"] .hero-toggle .i-off { display: block; }
+
 .nav-toggle {
   display: none;
   width: 40px; height: 40px;
@@ -359,6 +389,13 @@ html[data-theme="light"] .theme-toggle .i-moon { display: block; }
 }
 
 .hero-canvas canvas { width: 100%; height: 100%; }
+
+/* the visitor switched the volume off — the layer stays in the DOM so it can
+   come back without a reload, but it is invisible and inert */
+html[data-hero="off"] .hero-canvas {
+  opacity: 0 !important;
+  pointer-events: none;
+}
 
 .hero-glow {
   position: fixed;
