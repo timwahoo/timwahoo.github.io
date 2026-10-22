@@ -46,9 +46,9 @@ export const SITE = {
     /* title defaults to "<full name> — <role>" */
     title: null,
     description:
-      "Tim develops methods that turn magnetic resonance signals into clearer images — accelerated reconstruction, motion-robust imaging, and pulse sequence design.",
+      "Tim develops methods for accelerated reconstruction, motion-robust imaging, and quantitative MR.",
     ogTitle: "Timothy Ho — MRI Graduate Researcher",
-    ogDescription: "From pulse sequences to pixel-perfect reconstruction.",
+    ogDescription: "From pulse sequences to reconstruction.",
   },
 
   /* --------------------------------------------------------------- nav --- */
@@ -81,7 +81,7 @@ export const SITE = {
   /* -------------------------------------------------------------- home --- */
   hero: {
     label: "MRI physics · Computational imaging",
-    sub: "I build the methods that turn magnetic resonance signals into clearer images — from pulse sequences to pixel-perfect reconstruction.",
+    sub: "I work on hardware, pulse programs, and quantitative MR techniques for 9.4T MRI Scanners.",
     actions: [
       { label: "Explore the research", href: "research.html", style: "solid" },
       { label: "Publications", href: "publications.html", style: "ghost" },
@@ -111,10 +111,11 @@ export const SITE = {
     about: {
       idx: "01",
       heading: "Signals in,<br>images out", /* html */
-      lead: "An MRI scan doesn't photograph the body — it <em>measures frequencies</em> and solves an inverse problem.", /* html */
+      lead: "An MRI scan doesn't photograph the body — it <em>measures frequencies</em>.", /* html */
       paragraphs: [
-        "I work at the interface of <strong>magnetic resonance physics</strong>, <strong>machine learning</strong>, and <strong>science policy</strong>, designing acquisition strategies and reconstruction algorithms that scans without sacrificing the quantitative fidelity clinicians and scientists rely on.",
-        "My group's work spans compressed sensing and parallel imaging, physics-informed deep reconstruction, and motion-robust sequences for abdominal, cardiac and fetal imaging — usually with an open-source implementation attached.",
+        "I work at the intersection of <strong>magnetic resonance physics</strong>, <strong>machine learning</strong>, and <strong>science policy</strong>",
+        "My group works on topics that span compressed sensing, parallel imaging, multiple nuclei, and High-Field MRI.",
+        "I am a huge supporter of open-source research.",
       ], /* html */
       stats: [
         { value: "2", label: "Publications" },
@@ -275,9 +276,9 @@ export const SITE = {
     kicker: "About — physicist in a magnet room",
     title: "Fascinated by what <em>can't be seen</em> directly.", /* html */
     paragraphs: [
-      "I'm a Graduate Researcher of radiology and biomedical engineering, and I spend most of my days between two rooms: the <strong>magnet room</strong>, where physics decides what can be measured, and the <strong>compute room</strong>, where algorithms decide what can be recovered.",
-      "The portrait beside this text isn't a photo — it's the same procedural phantom that drives the simulator on the research page, generated live from a handful of equations. Drag it to move through the volume; it's a small reminder that everything on this site, like everything in MRI, starts as a signal model.",
-      "I'm currently training to be a physicist, learned that the interesting problems are always inverse problems, and never quite got over how elegant the Fourier relationship at the heart of MRI is. Outside the lab: long-distance swimming, analog synthesizers, and an ongoing attempt to brew espresso worthy of the scanner console.",
+      "I'm a Graduate Researcher in the Department of Radiology and Biomedical Engineering.",
+      "The portrait beside this text isn't a photo — it's the same phantom on the simulator on the research page. Drag it to move through the volume.",
+      "I'm currently training to be a MR Scientist. Outside the lab: long-distance swimming, analog synthesizers, and running.",
     ], /* html */
 
     toolkit: [
@@ -302,7 +303,7 @@ export const SITE = {
           where: "University of Virignia · researching hardware, pulse sequences, and quantitative MR",
         },
         {
-          year: "2026 — 2026",
+          year: "2026",
           role: "COVES Fellow, Virginia Academy for Science Engineering and Medicine (VASEM)",
           where: "Virginia State Government · integrating science into policy",
         },        
@@ -323,8 +324,8 @@ export const SITE = {
     contact: {
       idx: "02",
       heading: "Get in touch",
-      lead: "Students, collaborators, reviewers with grudges — <em>all welcome</em>.", /* html */
-      body: "I work with people from all different disciplines. Tell me what you're interested in.",
+      lead: "Students, collaborators, anyone — <em>all welcome</em>.", /* html */
+      body: "I enjoy meeting with people from all different disciplines. Tell me what you're interested in.",
     },
 
     cta: {
