@@ -19,6 +19,15 @@
   --ink-2: #b9bdc6;
   --ink-3: #7d838f;
   --ink-display: #f4f2ec;
+  /* the hero keeps its dark volume in day mode, so its display type uses its
+     own pair of colours instead of the page-wide ink/accent tokens */
+  --hero-name: var(--ink-display);
+  --hero-name-acc: var(--acc);
+  --hero-name-acc-rgb: var(--acc-rgb);
+  --hero-ink-2: var(--ink-2);
+  --hero-ink-3: var(--ink-3);
+  --hero-acc-dim: var(--acc-dim);
+  --hero-line: var(--line);
   --acc: #5cf2d0;
   --acc-rgb: 92 242 208;
   --acc-2: #8ef7ff;
@@ -92,6 +101,19 @@ html[data-theme="light"] {
   --range-track: rgba(20, 26, 32, 0.2);
   --scroll-thumb: #d3d6da;
   --scroll-thumb-hi: #b6bcc3;
+}
+
+/* The day theme still renders a dark MRI volume behind the hero, so the hero
+   and the un-scrolled nav switch to a light-on-dark palette. When the volume
+   is switched off the hero falls back to the normal paper palette. */
+html[data-theme="light"]:not([data-hero="off"]) {
+  --hero-name: #f4f1e8;
+  --hero-name-acc: #7cefd4;
+  --hero-name-acc-rgb: 124 239 212;
+  --hero-ink-2: #c9d3d3;
+  --hero-ink-3: #9aa7a6;
+  --hero-acc-dim: rgba(124, 239, 212, 0.78);
+  --hero-line: rgba(244, 241, 232, 0.2);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -287,6 +309,57 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
   box-shadow: 0 0 24px rgb(var(--acc-rgb) / 0.16);
 }
 
+/* Day mode: lift the nav labels off --ink-3 for better contrast on paper. */
+html[data-theme="light"] .nav-links a {
+  color: var(--ink-2);
+}
+
+/* Day mode, hero visible: the transparent nav sits on the dark volume, so it
+   borrows the hero palette until it gets its solid background on scroll. */
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .brand {
+  color: var(--hero-name);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .brand em {
+  color: var(--hero-name-acc);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .brand .brand-dot {
+  background: var(--hero-name-acc);
+  box-shadow: 0 0 12px var(--hero-name-acc);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-links a {
+  color: var(--hero-ink-2);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-links a:hover {
+  color: var(--hero-name);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-links a[aria-current="page"] {
+  color: var(--hero-name-acc);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-links a::after {
+  background: var(--hero-name-acc);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-cta {
+  color: var(--hero-name);
+  border-color: var(--hero-line);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .theme-toggle,
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .hero-toggle {
+  color: var(--hero-ink-2);
+  border-color: var(--hero-line);
+}
+
+html[data-theme="light"]:not([data-hero="off"]) body[data-page="home"] .nav:not(.scrolled):not(.menu-open) .nav-toggle span {
+  background: var(--hero-name);
+}
+
 /* ---------- day / night toggle ---------- */
 
 .theme-toggle {
@@ -419,7 +492,7 @@ html[data-hero="off"] .hero-canvas {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  color: var(--acc-dim);
+  color: var(--hero-acc-dim);
   margin-bottom: clamp(1rem, 3vh, 1.8rem);
 }
 
@@ -427,7 +500,7 @@ html[data-hero="off"] .hero-canvas {
   content: "";
   width: clamp(34px, 5vw, 64px);
   height: 1px;
-  background: var(--acc-dim);
+  background: var(--hero-acc-dim);
 }
 
 .hero h1 {
@@ -436,7 +509,7 @@ html[data-hero="off"] .hero-canvas {
   font-size: clamp(3.4rem, 12.5vw, 9.5rem);
   line-height: 0.94;
   letter-spacing: -0.015em;
-  color: var(--ink-display);
+  color: var(--hero-name);
 }
 
 .hero h1 .ln { display: block; overflow: hidden; }
@@ -450,8 +523,8 @@ html[data-hero="off"] .hero-canvas {
 .hero h1 .ln:nth-child(2) > span { animation-delay: 0.12s; }
 .hero h1 em {
   font-style: italic;
-  color: var(--acc);
-  text-shadow: 0 0 44px rgb(var(--acc-rgb) / 0.35);
+  color: var(--hero-name-acc);
+  text-shadow: 0 0 44px rgb(var(--hero-name-acc-rgb) / 0.35);
 }
 
 @keyframes rise { to { transform: translateY(0); } }
@@ -461,7 +534,7 @@ html[data-hero="off"] .hero-canvas {
   margin-top: clamp(1.2rem, 3vh, 2rem);
   font-size: clamp(1.05rem, 1.5vw, 1.3rem);
   line-height: 1.55;
-  color: var(--ink-2);
+  color: var(--hero-ink-2);
   animation: fade 1.2s 0.5s var(--ease) both;
 }
 
@@ -487,13 +560,13 @@ html[data-hero="off"] .hero-canvas {
   gap: 1.5rem;
   margin-top: clamp(2.5rem, 8vh, 5rem);
   padding-top: 1.1rem;
-  border-top: 1px solid var(--line);
-  color: var(--ink-3);
+  border-top: 1px solid var(--hero-line);
+  color: var(--hero-ink-3);
   animation: fade 1.2s 1s var(--ease) both;
 }
 
 .hero-readout { display: flex; flex-wrap: wrap; gap: 1.4rem; }
-.hero-readout b { color: var(--acc); font-weight: 500; }
+.hero-readout b { color: var(--hero-name-acc); font-weight: 500; }
 .hero-readout span { font-variant-numeric: tabular-nums; }
 
 .scroll-hint {
@@ -507,7 +580,7 @@ html[data-hero="off"] .hero-canvas {
   display: block;
   width: 1px;
   height: 34px;
-  background: linear-gradient(var(--acc), transparent);
+  background: linear-gradient(var(--hero-name-acc), transparent);
   animation: drop 1.8s ease-in-out infinite;
 }
 
@@ -1746,6 +1819,15 @@ footer {
 }
 
 @media (max-width: 760px) {
+  /* iOS Safari: a backdrop-filter on the nav makes it the containing block
+     for the fixed menu, so the overlay gets clipped to the 70px bar once the
+     page is scrolled. Drop the blur and use a solid bar instead. */
+  .nav.scrolled {
+    background: var(--bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
   .nav-toggle { display: block; }
   .nav-cta { display: none; }
   .nav-inner { gap: 0.9rem; }

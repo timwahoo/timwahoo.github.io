@@ -129,6 +129,7 @@ if (toggle && links) {
   toggle.addEventListener("click", () => {
     const open = links.classList.toggle("open");
     toggle.classList.toggle("open", open);
+    nav?.classList.toggle("menu-open", open);
     toggle.setAttribute("aria-expanded", String(open));
     document.body.style.overflow = open ? "hidden" : "";
   });
@@ -136,6 +137,7 @@ if (toggle && links) {
     a.addEventListener("click", () => {
       links.classList.remove("open");
       toggle.classList.remove("open");
+      nav?.classList.remove("menu-open");
       document.body.style.overflow = "";
     })
   );
