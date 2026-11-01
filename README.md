@@ -33,6 +33,7 @@ Useful things to know:
 | Swap my projects | `home.work.items` — add or delete entries |
 | Change the research threads | `research.threads` |
 | Add a paper | `publications.items` — it appears in the list, the filters, the home preview and the BibTeX automatically |
+| Write a blog post | add an entry to `blog.posts` and a Markdown file to `posts/` — see [Writing a blog post](#writing-a-blog-post) |
 | Add a link (Scholar, ORCID, GitHub, CV…) | `links` — used by the contact list *and* the footer |
 | Rename the navigation | `nav.items` |
 | Reword the "page not found" page | `notFound` |
@@ -51,8 +52,71 @@ turn its title and PDF buttons into real links.
 | `index.html` | WebGL hero — a volumetric brain stack with an animated acquisition sweep, built with **three.js** (bloom post-processing, additive rings, field-of-view wireframe, drifting particles). |
 | `research.html` | **k-space Lab** — a live MRI simulator: a real MGE slice → real FFT → undersampled sampling (Cartesian / radial / spiral) → inverse FFT reconstruction, with acceleration and noise controls and live PSNR. |
 | `publications.html` | Data-driven publication list with topic + year filters and one-click BibTeX. |
+| `blog.html` | Markdown-driven writing index with tag filters, dates and reading times. |
+| `post.html` | The post template — reads `?slug=…`, renders the matching Markdown file, adds prev/next navigation, and can switch on an MRI motif per post. |
 | `about.html` | A scrubbable "portrait" — a real axial slice of the acquisition you can drag through with the pointer. |
 | `404.html` | Self-contained "signal lost outside the FOV" page. |
+
+## Writing a blog post
+
+Each post is one metadata entry plus one Markdown file:
+
+1. Add the metadata to `blog.posts` in `data/data.js`.
+2. Add the article body to `posts/<slug>.md`.
+
+```js
+{
+  slug: "notes-from-kspace",
+  title: "Notes from k-space",
+  date: "2026-10-17",                 // ISO — newest first
+  excerpt: "One line for the index.",
+  tags: ["MRI", "reconstruction"],
+  mri: true,                          // optional: switch on the MRI motif
+  readout: [                          // optional: mono header strip
+    { label: "Seq", value: "MGE" },
+    { label: "TR", value: "7.2", unit: "ms" },
+  ],
+}
+```
+
+The body is fetched from `posts/<slug>.md` (or `post.file` if you set one) and
+rendered in `post.html?slug=…`. The index lives at `blog.html`; tag chips filter
+the list and tag links carry a `?tag=…` query into the index.
+
+The Markdown renderer is deliberately small: headings, paragraphs, bold/italic,
+inline and fenced code, links, images, figures, blockquotes, ordered/unordered
+lists and horizontal rules. Raw HTML is escaped and shown as text.
+
+### Adding an image
+
+Put the file under `assets/blog/<slug>/` (or any other path under `assets/`) and
+reference it from the post's Markdown. Paths are relative to the site root:
+
+```md
+![The reconstruction mask](assets/blog/notes-from-kspace/mask.png)
+```
+
+A standalone image line with an optional quoted title becomes a figure with a
+caption:
+
+```md
+![The reconstruction mask](assets/blog/notes-from-kspace/mask.png "Figure 1 — The mask used for the accelerated reconstruction.")
+```
+
+Keep images compressed and reasonably sized; CSS caps their display width but
+does not resize the file. Captions only apply when the image is alone on its
+line.
+
+- `mri: true` adds a faint k-space grid and a slow acquisition sweep to that
+  post's header only. It is pure CSS and turns off under `prefers-reduced-motion`.
+- Reading time is computed from the Markdown word count (200 words/minute).
+- Image paths are relative to the site root — see [Adding an image](#adding-an-image).
+- Dates are shown in UTC so a post never shifts a day depending on the reader.
+- Post titles, descriptions and Open Graph tags are applied in the browser.
+  Crawlers that do not run JavaScript see the generic site metadata; use static
+  per-post pages if social previews or search indexing matter.
+- Leave `blog.posts` empty and the index shows its empty-state line instead of a
+  hollow list; the CTA disappears through `data-require`.
 
 ## Design notes
 
@@ -69,9 +133,11 @@ turn its title and PDF buttons into real links.
 ## Architecture
 
 ```
-index.html · research.html · publications.html · about.html · 404.html
+index.html · research.html · publications.html · blog.html · post.html · about.html · 404.html
 data/
   data.js                all site content — the single file you personalize
+posts/
+  *.md                   blog article bodies (metadata stays in data/data.js)
 css/style.css            design system (tokens, components, responsive, a11y)
 js/
   personalize.js         injects data/data.js into the markup (data-bind / data-render)
@@ -80,8 +146,11 @@ js/
   hero.js                three.js volumetric hero
   kspacelab.js           interactive k-space simulator
   publications.js        publication list/filter/BibTeX rendering
+  markdown.js            tiny dependency-free Markdown → HTML renderer
+  blog.js                writing index, tag filters, post template, prev/next
   site.js                nav, day/night toggle, hero volume switch, scroll reveals, portrait scrub, mini figures, toasts
 assets/
+  blog/                  post images (create per-post folders as needed)
   favicon.svg
   png_stack/             the source acquisition — 158 axial MGE slices
   mri/                   derived assets (generated) — manifest, hero stack, lab phantom
@@ -113,6 +182,9 @@ How it works:
 - `js/hero.js` listens for that event and repaints the WebGL volume: at night the slices glow
   (additive blending, bright anatomy on a black plate); by day the plate is dropped and the
   anatomy becomes an alpha mask, so the stack reads as translucent ink on paper.
+- The day-mode hero still reads as a dark field, so the hero display type and the transparent
+  home-page nav use their own `--hero-*` light-on-dark tokens. Inner pages, the scrolled nav and
+  the hero-off state keep the normal dark-on-paper day palette.
 - The image viewers (the k-space lab panels, the About portrait) stay dark in both modes — medical
   images are read on black, and the frames keep their borders so they read as screens, not holes.
 - `features.themeToggle: false` removes the switch entirely.
@@ -149,7 +221,7 @@ a skull-stripped, axial **MGE** volume kept in `assets/png_stack/` as 8-bit gray
 
 | | |
 | --- | --- |
-| sequence | MGE (magnetization-prepared gradient echo), TE 3 ms, TR 7.2 ms |
+| sequence | MGE (multi-gradient echo), TE 3 ms, TR 60 ms |
 | contrast | T1-weighted — white matter bright, CSF dark |
 | geometry | 224 × 186 in plane, 1 mm isotropic, 153 usable slices (0023 – 0175) |
 | plane | axial, ordered superior → inferior |
@@ -213,6 +285,7 @@ The demo persona is loud. If your site is quieter, the blocks collapse on their 
 | My situation | What happens |
 | --- | --- |
 | No publications yet | `publications.items: []` → the Publications page shows one line of prose, the home-page "recent papers" block and the filter chips disappear |
+| No blog posts yet | `blog.posts: []` → the index shows its empty-state line, and the blog CTA disappears |
 | No open-source projects | `home.work.items: []` / `research.tools.items: []` → "Selected work" and "Tools we ship" disappear |
 | No research threads yet | `research.threads: []` → the section disappears |
 | No timeline, no toolkit, no contact links | the matching blocks disappear |
@@ -265,6 +338,9 @@ If the repo is not at the domain root it still works, since all asset URLs are r
 
 - Respects `prefers-reduced-motion` (hero freezes to a representative frame, autoplay stops).
 - Keyboard-focusable controls with visible focus rings; ARIA state on the mobile nav.
+- The mobile menu stays fixed to the viewport at any scroll position — on narrow screens the
+  scrolled nav drops its `backdrop-filter` (which would otherwise become the menu's containing
+  block on iOS Safari) and uses a solid background instead.
 - Day and night palettes both clear WCAG AA; the mode is remembered per browser and follows the
   operating system until the visitor picks one.
 - Canvas work is capped: pixel ratio ≤ 2, textures cached, rAF paused when the tab is hidden or

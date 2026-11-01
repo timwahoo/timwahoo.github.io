@@ -29,8 +29,8 @@ export const SITE = {
   identity: {
     firstName: "Tim",
     lastName: "Ho",
-    role: "Graduate MRI Physicist & Computational Imaging Researcher",
-    shortRole: "MRI Graduate Student",
+    role: "Graduate MRI & Computational Researcher",
+    shortRole: "Biomedical Engineering Graduate Student",
     tagline: "MRI physics · Computational imaging",
     location: "University of Virginia",
     email: "timothy dot ho at virginia dot edu",
@@ -47,7 +47,7 @@ export const SITE = {
     title: null,
     description:
       "Tim develops methods for accelerated reconstruction, motion-robust imaging, and quantitative MR.",
-    ogTitle: "Timothy Ho — MRI Graduate Researcher",
+    ogTitle: "Timothy Ho — BME Graduate Researcher",
     ogDescription: "From pulse sequences to reconstruction.",
   },
 
@@ -57,6 +57,7 @@ export const SITE = {
       { label: "Home", href: "index.html", page: "home" },
       { label: "Research", href: "research.html", page: "research" },
       { label: "Publications", href: "publications.html", page: "publications" },
+      { label: "Blog", href: "blog.html", page: "blog" },
       { label: "About", href: "about.html", page: "about" },
     ],
     cta: { label: "Get in touch", href: "about.html#contact" },
@@ -300,7 +301,7 @@ export const SITE = {
         {
           year: "2021 — now",
           role: "Graduate Researcher, Radiology & Biomedical Engineering",
-          where: "University of Virignia · researching hardware, pulse sequences, and quantitative MR",
+          where: "University of Virginia · researching hardware, pulse sequences, and quantitative MR",
         },
         {
           year: "2026",
@@ -310,7 +311,7 @@ export const SITE = {
         {
           year: "2024 — 2025",
           role: "Teaching Assistant, Biomedical Engineering",
-          where: "University of Virignia · BME Capstone and Introduction to Cell Biology and Physiology for Engineers",
+          where: "University of Virginia · BME Capstone and Introduction to Cell Biology and Physiology for Engineers",
         },
         {
           year: "2020",
@@ -325,7 +326,7 @@ export const SITE = {
       idx: "02",
       heading: "Get in touch",
       lead: "Students, collaborators, anyone — <em>all welcome</em>.", /* html */
-      body: "I enjoy meeting with people from all different disciplines. Tell me what you're interested in.",
+      body: "I enjoy meeting people from all different disciplines. Tell me what you're interested in.",
     },
 
     cta: {
@@ -350,6 +351,7 @@ export const SITE = {
     /* Filter chips. `id` must match the `topic` of your entries below. */
     topics: [
       { id: "all", label: "All" },
+      { id: "hard", label: "Hardware" },
       { id: "recon", label: "Reconstruction" },
       { id: "motion", label: "Motion" },
       { id: "sampling", label: "Sampling" },
@@ -361,6 +363,14 @@ export const SITE = {
        preview and the BibTeX all follow automatically.
        Optional: `url` (link to the paper) and `note` (e.g. "Oral"). */
     items: [
+      {
+        year: 2027,
+        title: "(PENDING) Effect of Loop Radius on the Resonant Behavior and Effective Electrical Properties of Twisted-Pair RF Coil for 9.4T MRI",
+        venue: "ISMRM Annual Meeting",
+        short: "ISMRM",
+        topic: "quant",
+        authors: "T. Ho, R.J. Price, G.W. Miller",
+      },
       {
         year: 2026,
         title: "Quantitative Susceptibility Mapping to Measure Focused Ultrasound-Mediated Delivery of Size-Variable Model Drugs to the Brain",
@@ -394,6 +404,62 @@ export const SITE = {
     },
   },
 
+  /* --------------------------------------------------------------- blog --- */
+  /* The writing index and the post template both read from here. Each post
+     points at a Markdown file in posts/; the body is fetched at runtime and
+     rendered by js/blog.js. Optional per-post fields:
+     file     — Markdown filename (defaults to <slug>.md)
+     mri      — true switches on the MRI motif (scanline, k-space grid,
+                mono readout) for that post only
+     readout  — rows shown in the MRI header, e.g. { label, value, unit } */
+    blog: {
+    kicker: "Writing — field notes & side quests",
+    title: "Notes from the <em>console</em>.", /* html */
+    sub: "Occasional writing about imaging, code, and the things that keep me curious between scans. Some posts lean MRI; others don't.",
+    empty: "No posts yet — add one to data/data.js and it appears here.",
+
+    posts: [
+      {
+        slug: "hello-world",
+        title: "Hello, world",
+        date: "2026-10-24",
+        excerpt: "Why I finally started writing things down, and what to expect here.",
+        tags: ["meta", "writing"],
+        mri: false,
+      },/*
+      {
+        slug: "notes-from-kspace",
+        title: "Notes from k-space",
+        date: "2026-10-17",
+        excerpt:
+          "A few things I keep relearning about sampling, aliasing, and trusting the reconstruction.",
+        tags: ["MRI", "reconstruction"],
+        mri: true,
+        readout: [
+          { label: "Seq", value: "MGE" },
+          { label: "TR", value: "7.2", unit: "ms" },
+          { label: "TE", value: "3", unit: "ms" },
+          { label: "Field", value: "3T" },
+        ],
+      },
+      {
+        slug: "espresso-and-inverse-problems",
+        title: "Espresso and inverse problems",
+        date: "2026-10-03",
+        excerpt:
+          "A non-MRI post about dialing in a shot, borrowing lab habits, and knowing when to stop adjusting.",
+        tags: ["coffee", "process"],
+        mri: false,
+      },*/
+    ],
+
+    cta: {
+      heading: "Have a <em>topic</em> in mind?", /* html */
+      sub: "I write more when people ask questions. Send one over.",
+      action: { label: "Get in touch", href: "about.html#contact" },
+    },
+  },
+
   /* -------------------------------------------------------------- 404 --- */
   /* Copy for the "not found" page. Shown when the page is served for a
      missing URL. */
@@ -406,7 +472,7 @@ export const SITE = {
 
   /* ------------------------------------------------------------ footer --- */
   footer: {
-    blurb: "Graduate Researcher in the Department of Radiology & Biomedical Engineering. Building faster, calmer MRI — one line of k-space at a time.",
+    blurb: "Graduate Researcher in the Department of Biomedical Engineering at UVA. Building faster, calmer MRI — one line of k-space at a time.",
     note: "phased out",
     stack: "Instrument Serif · three.js · zero frameworks",
     builtWith: 'Built with <a href="https://opencode.ai" target="_blank" rel="noopener">opencode</a> · model <b>opencode/big-pickle</b>',
